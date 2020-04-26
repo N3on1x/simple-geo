@@ -45,5 +45,34 @@ public class DistanceTest {
       double actual = Distance.distHaversine(p1, p2);
       assertEquals(expected, actual, delta);
     }
+
+    @Test
+    public void singlePoint() {
+      Point p = new Point(90,0);
+      double expected = 0;
+      double delta = 0;
+      double actual = Distance.distHaversine(p,p);
+      assertEquals(expected,actual,delta);
+    }
+
+    @Test
+    public void northPoleCrossing() {
+      Point p1 = new Point(89.9,0);
+      Point p2 = new Point(89.9,180);
+      double expected = 22240;
+      double delta = 0.01 * expected;
+      double actual = Distance.distHaversine(p1,p2);
+      assertEquals(expected,actual,delta);
+    }
+
+    @Test
+    public void southPoleCrossing() {
+      Point p1 = new Point(-89.9,0);
+      Point p2 = new Point(-89.9,180);
+      double expected = 22240;
+      double delta = 0.01 * expected;
+      double actual = Distance.distHaversine(p1,p2);
+      assertEquals(expected,actual,delta);
+    }
   }
 }
