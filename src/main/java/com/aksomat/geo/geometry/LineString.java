@@ -34,9 +34,9 @@ public class LineString extends LinkedList<Point> {
     double c = Distance.distHaversine(start, end) / Model.EARTH_MEAN_RADIUS;
 
     double azimuth = Navigation.calculateAzimuth(c, start, end);
-    double space = c / (n - 1);
+    double step = c / (n - 1);
     for (int i = 1; i < n - 1; i++) {
-      Point child = Point.greatCirclePoint(start, azimuth, i * space);
+      Point child = Point.greatCirclePoint(start, azimuth, i * step);
       this.add(child);
     }
     this.add(end);
