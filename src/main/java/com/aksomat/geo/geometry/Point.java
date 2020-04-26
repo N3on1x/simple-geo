@@ -2,11 +2,7 @@ package com.aksomat.geo.geometry;
 
 import com.aksomat.geo.utils.Model;
 
-import static java.lang.Math.sin;
-
-/**
- * A point with a latitude and longitude
- */
+/** A point with a latitude and longitude */
 public class Point {
   private final double lat;
   private final double lon;
@@ -29,6 +25,30 @@ public class Point {
     this.lat = lat;
     this.lon = lon;
     this.description = description;
+  }
+
+  /**
+   * Given an initial point, an azimuth and a surface distance; calculates the corresponding end
+   * point.
+   * @param startPoint the initial point
+   * @param azimuth the direction (angle) clockwise relative to north in radians
+   * @param distance the surface distance.
+   * @return
+   */
+  public static Point greatCirclePoint(Point startPoint, double azimuth, double distance) {
+    // TODO Should use n-vector instead of Lat, Lon to avoid common problems
+    double coLatStart = Math.toRadians(90 - startPoint.getLat());
+    double bearing = azimuth < Math.PI ? azimuth : 2 * Math.PI - azimuth;
+    double coLatPoint = Model.ahav(Model.lawOfHaversines(distance, coLatStart, bearing));
+    // FIXME Singularity at north pole. Use n-vector instead
+    double lonDiffAbs = Math.asin(Math.sin(distance) * Math.sin(bearing) / Math.sin(coLatPoint));
+    double lon =
+        azimuth < Math.PI
+            ? startPoint.getLon() + Math.toDegrees(lonDiffAbs)
+            : startPoint.getLon() - Math.toDegrees(lonDiffAbs);
+    double lat = 90 - Math.toDegrees(coLatPoint);
+    Point point = new Point(lat, lon);
+    return point;
   }
 
   @Override
@@ -72,36 +92,10 @@ public class Point {
    * Get the point values as an array
    *
    * @return the latitude and longitude in an array where the first item is the latitude, and the
-   * second is the longitude
+   *     second is the longitude
    */
   public double[] getArray() {
     double[] points = {lat, lon};
     return points;
-  }
-
-  public static Point greatCirclePoint(Point startPoint, double azimuth, double distance) {
-    double coLatStart = Math.toRadians(90 - startPoint.getLat());
-    double coLatPoint;
-    double lonDist;
-    double lon;
-    // FIXME Should use n-vector instead of Lat, Lon to avoid common problems
-    if (azimuth < Math.PI) {
-      coLatPoint = Model.ahav(Model.lawOfHaversines(distance, coLatStart, azimuth));
-      lonDist =
-              Model.ahav(
-                      (Model.hav(distance) - Model.hav(coLatStart - coLatPoint))
-                      / (sin(coLatStart) * sin(coLatPoint)));
-      lon = startPoint.getLon() + Math.toDegrees(lonDist);
-    } else {
-      coLatPoint = Model.ahav(Model.lawOfHaversines(coLatStart, distance, 2 * Math.PI - azimuth));
-      lonDist =
-              Model.ahav(
-                      (Model.hav(distance) - Model.hav(coLatPoint - coLatStart))
-                      / (sin(coLatPoint) * sin(coLatStart)));
-      lon = startPoint.getLon() - Math.toDegrees(lonDist);
-    }
-    double lat = 90 - Math.toDegrees(coLatPoint);
-    Point point = new Point(lat, lon);
-    return point;
   }
 }
