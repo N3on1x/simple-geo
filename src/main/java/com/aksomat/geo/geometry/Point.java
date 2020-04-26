@@ -1,5 +1,9 @@
 package com.aksomat.geo.geometry;
 
+import com.aksomat.geo.utils.Model;
+
+import static java.lang.Math.sin;
+
 /**
  * A point with a latitude and longitude
  */
@@ -73,5 +77,31 @@ public class Point {
   public double[] getArray() {
     double[] points = {lat, lon};
     return points;
+  }
+
+  public static Point greatCirclePoint(Point startPoint, double azimuth, double distance) {
+    double coLatStart = Math.toRadians(90 - startPoint.getLat());
+    double coLatPoint;
+    double lonDist;
+    double lon;
+    // FIXME Should use n-vector instead of Lat, Lon to avoid common problems
+    if (azimuth < Math.PI) {
+      coLatPoint = Model.ahav(Model.lawOfHaversines(distance, coLatStart, azimuth));
+      lonDist =
+              Model.ahav(
+                      (Model.hav(distance) - Model.hav(coLatStart - coLatPoint))
+                      / (sin(coLatStart) * sin(coLatPoint)));
+      lon = startPoint.getLon() + Math.toDegrees(lonDist);
+    } else {
+      coLatPoint = Model.ahav(Model.lawOfHaversines(coLatStart, distance, 2 * Math.PI - azimuth));
+      lonDist =
+              Model.ahav(
+                      (Model.hav(distance) - Model.hav(coLatPoint - coLatStart))
+                      / (sin(coLatPoint) * sin(coLatStart)));
+      lon = startPoint.getLon() - Math.toDegrees(lonDist);
+    }
+    double lat = 90 - Math.toDegrees(coLatPoint);
+    Point point = new Point(lat, lon);
+    return point;
   }
 }

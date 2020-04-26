@@ -1,0 +1,20 @@
+﻿{
+"type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Gatenavn": "Njords Veg",
+        "Husnr": 3,
+        "Bolignummer": "U0101"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.42124,
+          63.406813
+        ]
+      }
+    }
+  ]
+}

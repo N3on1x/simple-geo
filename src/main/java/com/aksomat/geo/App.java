@@ -1,6 +1,6 @@
 package com.aksomat.geo;
 
-import com.aksomat.geo.distance.Utils;
+import com.aksomat.geo.utils.Distance;
 import com.aksomat.geo.geometry.LineString;
 import com.aksomat.geo.geometry.Point;
 
@@ -15,14 +15,14 @@ public class App {
     Point saoPaolo = new Point(-23.579091596182867, -46.65893554687499);
     Point vancouver = new Point(49.25346477497736, -123.1622314453125);
 
-    double planarDistance = Utils.distPlanar(vancouver, samfundet);
-    double haversineDistance = Utils.distHaversine(vancouver, samfundet);
+    double planarDistance = Distance.distPlanar(vancouver, samfundet);
+    double haversineDistance = Distance.distHaversine(vancouver, samfundet);
 
     System.out.println("Planar distance: " + planarDistance + " m");
     System.out.println("Haversine distance: " + haversineDistance + " m");
     System.out.println("Difference: " + (haversineDistance - planarDistance) + '\n');
 
-    LineString intervals = Utils.linspace(samfundet, vancouver, 9);
+    LineString intervals = new LineString(samfundet, vancouver, 9);
     System.out.println(intervals);
 
     //
