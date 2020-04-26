@@ -1,4 +1,4 @@
-package com.aksomat.geo.distance;
+package com.aksomat.geo.utils;
 
 import com.aksomat.geo.geometry.LineString;
 import com.aksomat.geo.geometry.Point;
