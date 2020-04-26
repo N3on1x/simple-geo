@@ -30,6 +30,7 @@ public class Point {
   /**
    * Given an initial point, an azimuth and a surface distance; calculates the corresponding end
    * point.
+   *
    * @param startPoint the initial point
    * @param azimuth the direction (angle) clockwise relative to north in radians
    * @param distance the surface distance.
@@ -37,16 +38,20 @@ public class Point {
    */
   public static Point greatCirclePoint(Point startPoint, double azimuth, double distance) {
     // TODO Should use n-vector instead of Lat, Lon to avoid common problems
-    double coLatStart = Math.toRadians(90 - startPoint.getLat());
-    double bearing = azimuth < Math.PI ? azimuth : 2 * Math.PI - azimuth;
-    double coLatPoint = Model.ahav(Model.lawOfHaversines(distance, coLatStart, bearing));
+    double coLatStartRAD = Math.toRadians(90 - startPoint.getLat());
+    double bearingRAD = azimuth < 180 ? Math.toRadians(azimuth) : Math.toRadians(360 - azimuth);
+    double radianDistance = distance / Model.EARTH_MEAN_RADIUS;
+    double coLatPointRAD =
+        Model.ahav(Model.lawOfHaversines(radianDistance, coLatStartRAD, bearingRAD));
     // FIXME Singularity at north pole. Use n-vector instead
-    double lonDiffAbs = Math.asin(Math.sin(distance) * Math.sin(bearing) / Math.sin(coLatPoint));
+    double lonDiffAbs =
+        Math.toDegrees(
+            Model.ahav(
+                (Model.hav(radianDistance) - Model.hav(coLatStartRAD - coLatPointRAD))
+                    / (Math.sin(coLatStartRAD) * Math.sin(coLatPointRAD))));
     double lon =
-        azimuth < Math.PI
-            ? startPoint.getLon() + Math.toDegrees(lonDiffAbs)
-            : startPoint.getLon() - Math.toDegrees(lonDiffAbs);
-    double lat = 90 - Math.toDegrees(coLatPoint);
+        azimuth < 180 ? startPoint.getLon() + lonDiffAbs : startPoint.getLon() - lonDiffAbs;
+    double lat = 90 - Math.toDegrees(coLatPointRAD);
     Point point = new Point(lat, lon);
     return point;
   }

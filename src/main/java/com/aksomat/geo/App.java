@@ -12,15 +12,15 @@ public class App {
     // Samfundet
     // Lat: 63.4225, Lon: 10.3954
     Point samfundet = new Point(63.4225, 10.3954, "Studentersamfundet in Trondheim");
-    Point saoPaolo = new Point(-23.579091596182867, -46.65893554687499);
+//    Point saoPaolo = new Point(-23.579091596182867, -46.65893554687499);
     Point vancouver = new Point(49.25346477497736, -123.1622314453125);
 
-    double planarDistance = Distance.distPlanar(vancouver, samfundet);
+//    double planarDistance = Distance.distPlanar(vancouver, samfundet);
     double haversineDistance = Distance.distHaversine(vancouver, samfundet);
 
-    System.out.println("Planar distance: " + planarDistance + " m");
+//    System.out.println("Planar distance: " + planarDistance + " m");
     System.out.println("Haversine distance: " + haversineDistance + " m");
-    System.out.println("Difference: " + (haversineDistance - planarDistance) + '\n');
+//    System.out.println("Difference: " + (haversineDistance - planarDistance) + '\n');
 
     LineString intervals = new LineString(samfundet, vancouver, 9);
     System.out.println(intervals);

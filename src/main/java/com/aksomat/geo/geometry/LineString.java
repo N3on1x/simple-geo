@@ -1,7 +1,6 @@
 package com.aksomat.geo.geometry;
 
 import com.aksomat.geo.utils.Distance;
-import com.aksomat.geo.utils.Model;
 import com.aksomat.geo.utils.Navigation;
 
 import java.util.Iterator;
@@ -14,9 +13,8 @@ public class LineString extends LinkedList<Point> {
   }
 
   /**
-   * Constructs a
-   * Calculates and creates new points linearly spaced on a geodesic line between the two input
-   * parameters.
+   * Constructs a LineString object with points linearly spaced on a geodesic line between the two
+   * input parameters.
    *
    * <p>This function is implemented assuming the earth is a perfect sphere (which it is not). It
    * should be fairly accurate for short distances.
@@ -31,30 +29,28 @@ public class LineString extends LinkedList<Point> {
     super();
     this.add(start);
 
-    double c = Distance.distHaversine(start, end) / Model.EARTH_MEAN_RADIUS;
+    double distance = Distance.distHaversine(start, end);
 
-    double azimuth = Navigation.calculateAzimuth(c, start, end);
-    double step = c / (n - 1);
+    double azimuth = Navigation.initialAzimuth(start, end);
+    double step = distance / (n - 1);
     for (int i = 1; i < n - 1; i++) {
       Point child = Point.greatCirclePoint(start, azimuth, i * step);
       this.add(child);
     }
     this.add(end);
   }
+
   public String toString() {
     Iterator<Point> it = iterator();
-    if (! it.hasNext())
-      return "[]";
+    if (!it.hasNext()) return "[]";
 
     StringBuilder sb = new StringBuilder();
     sb.append("[\n  ");
-    for (;;) {
+    for (; ; ) {
       Point e = it.next();
       sb.append(e);
-      if (! it.hasNext())
-        return sb.append('\n').append(']').toString();
+      if (!it.hasNext()) return sb.append('\n').append(']').toString();
       sb.append(',').append("\n  ");
     }
   }
-
 }

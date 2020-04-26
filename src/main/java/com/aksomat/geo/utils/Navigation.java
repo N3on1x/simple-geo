@@ -2,23 +2,21 @@ package com.aksomat.geo.utils;
 
 import com.aksomat.geo.geometry.Point;
 
-import static java.lang.Math.sin;
-
 public final class Navigation {
   /** Don't let anyone instantiate this class. */
   private Navigation() {}
 
-  public static double calculateAzimuth(double c, Point start, Point end) {
-    double a = Math.toRadians(90 - start.getLat());
-    double b = Math.toRadians(90 - end.getLat());
-    double havB = (Model.hav(b) - Model.hav(c - a)) / (sin(c) * sin(a));
-    double bearing;
-    if (start.getLon() < end.getLon()) {
-      bearing = Model.ahav(havB);
-    } else {
-      bearing = (2 * Math.PI) - Model.ahav(havB);
-    }
-    return bearing;
+  public static double initialAzimuth(Point start, Point end) {
+    double lat1RAD = Math.toRadians(start.getLat());
+    double lon1RAD = Math.toRadians(start.getLon());
+    double lat2RAD = Math.toRadians(end.getLat());
+    double lon2RAD = Math.toRadians(end.getLon());
+    double y = Math.sin(lon2RAD - lon1RAD) * Math.cos(lat2RAD);
+    double x = Math.cos(lat1RAD) * Math.sin(lat2RAD) -
+               Math.sin(lat1RAD)*Math.cos(lat2RAD)*Math.cos(lon2RAD - lon1RAD);
+    double azimuth = Math.atan2(y,x);
+    azimuth = (Math.toDegrees(azimuth) % 360 + 360) % 360;
+    return azimuth;
   }
 
 
